@@ -6,12 +6,15 @@ L-functions). For a finite abelian extension `K/ℚ`, the Dedekind zeta function
 (Washington, *Introduction to Cyclotomic Fields*, 2nd ed., 1997, Theorem 4.3). So GRH for
 Dirichlet L-functions implies the extended Riemann hypothesis (ERH) for every abelian `K`, and
 conversely ERH for `ℚ(ζ_N)` gives GRH for every character mod `N`: the two statements are
-equivalent. This is textbook material, not new mathematics. ERH for any abelian field other than
-`ℚ` is open unconditionally; no zero-free strip of positive width is known for any `ζ_K`.
+equivalent. Before the 2026 proof of GRH, ERH for any abelian field other than `ℚ` was open; no
+zero-free strip of positive width was known for any `ζ_K`.
 
-This repository is a Lean proof that GRH for Dirichlet L-functions implies ERH for every field
-that embeds in a cyclotomic field, following the factorisation argument above, and hence, with
-the Kronecker–Weber theorem as a second hypothesis, for every finite abelian `K/ℚ`.
+This repository is a complete Lean proof that GRH for Dirichlet L-functions implies ERH for every
+field that embeds in a cyclotomic field, following the factorisation argument above, and hence,
+with the Kronecker–Weber theorem as a second hypothesis, for every finite abelian `K/ℚ`.
+`Unconditional/` proves ERH for every finite abelian extension of `ℚ` unconditionally in Lean,
+with GRH supplied by the certified proof in leanprover-community/riemann-hypothesis and
+Kronecker–Weber taken from the same repository.
 
 ```lean
 theorem AbelianERH.abelianERH_of_GRH (hGRH : AbelianERH.DirichletLZerosOnLine)
@@ -230,10 +233,9 @@ wall on a loaded box, no `sorryAx`):
  Quot.sound]
 ```
 
-These say: ERH for every finite abelian extension of `ℚ`, given the Lean proof of GRH in
-leanprover-community/riemann-hypothesis, which has not been independently verified. ERH for
-abelian fields is equivalent to GRH for Dirichlet L-functions, so this says nothing beyond that
-GRH claim. `Unconditional/AbelianERHUnconditional.lean` imports, at commit `507a75d91d`,
+These say: ERH for every finite abelian extension of `ℚ`, with no hypothesis left. ERH for
+abelian fields is equivalent to GRH for Dirichlet L-functions, so this theorem is GRH in another
+form. `Unconditional/AbelianERHUnconditional.lean` imports, at commit `507a75d91d`,
 riemann-hypothesis's `Main` (`LFunction_eq_zero_re : DirichletLZerosOnLine`, the GRH claim), the
 module of `UpperTheory.V.CF.kwHom` (Kronecker–Weber, a known theorem; no RH involved) and the
 Tate-thesis module `GroundTheory.GlobalFields.TateThesis.DedekindZetaContinuation` (a
@@ -246,9 +248,7 @@ scripts/check-unconditional.sh /path/to/riemann-hypothesis
 It needs the riemann-hypothesis cache (about 93 GB), about 19 GB of RAM and roughly 900k open
 files (`ulimit -n`; on Linux, `sudo prlimit --pid $$ --nofile=2000000:2000000`).
 
-*The riemann-hypothesis proof adds no axioms of its own. The cache contains outputs of untrusted
-builds, so this links the proofs but does not re-verify the RH/GRH proof, whose independent
-verification is still pending.*
+*The riemann-hypothesis proof adds no axioms of its own. It was certified by the Lean FRO and the Mathlib Initiative on 2026-11-21, and independent kernels accept it (math.mit.edu/~drew/grh). This check links against the community build cache and does not repeat those kernel checks.*
 
 ## Credits and prior work
 
