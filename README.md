@@ -1,22 +1,27 @@
 # The extended Riemann hypothesis for abelian number fields under GRH in Lean
 
-**Literature status: RH-consequence** (more exactly, a reformulation of GRH for Dirichlet
-L-functions). For a finite abelian extension `K/ℚ`, the Dedekind zeta function factors as
-`ζ_K(s) = ∏_{χ ∈ X(K)} L(s, χ)` over the primitive Dirichlet characters attached to `K`
-(Washington, *Introduction to Cyclotomic Fields*, 2nd ed., 1997, Theorem 4.3). So GRH for
-Dirichlet L-functions implies the extended Riemann hypothesis (ERH) for every abelian `K`, and
-conversely ERH for `ℚ(ζ_N)` gives GRH for every character mod `N`: the two statements are
-equivalent. Before the 2026 proof of GRH, ERH for any abelian field other than `ℚ` was open; no
+This repository proves the extended Riemann hypothesis (ERH) for every finite abelian extension
+`K/ℚ`: every zero of the Dedekind zeta function `ζ_K` in the critical strip lies on
+`Re s = 1/2`. `AbelianERH.Unconditional.abelianERH` proves it unconditionally in Lean, with GRH
+for Dirichlet L-functions supplied by the certified proof of L. Alpöge in
+[leanprover-community/riemann-hypothesis](https://github.com/leanprover-community/riemann-hypothesis)
+and the Kronecker–Weber theorem taken from the same repository. The main library holds a
+complete Lean proof that GRH implies ERH for every field that embeds in a cyclotomic field, and,
+with Kronecker–Weber as a second hypothesis, for every finite abelian `K/ℚ`.
+
+The argument is the classical factorisation `ζ_K(s) = ∏_{χ ∈ X(K)} L(s, χ)` over the primitive
+Dirichlet characters attached to `K` (Washington, *Introduction to Cyclotomic Fields*, 2nd ed.,
+1997, Theorem 4.3). It shows that GRH for Dirichlet L-functions implies ERH for every abelian
+`K`, and ERH for `ℚ(ζ_N)` gives GRH back for every character mod `N`, so the two statements are
+equivalent (label **RH-consequence**; ERH for abelian fields is GRH for Dirichlet L in another
+form). Before the 2026 proof of GRH, ERH was open for every abelian field other than `ℚ`, and no
 zero-free strip of positive width was known for any `ζ_K`.
 
-This repository is a complete Lean proof that GRH for Dirichlet L-functions implies ERH for every
-field that embeds in a cyclotomic field, following the factorisation argument above, and hence,
-with the Kronecker–Weber theorem as a second hypothesis, for every finite abelian `K/ℚ`.
-`Unconditional/` proves ERH for every finite abelian extension of `ℚ` unconditionally in Lean,
-with GRH supplied by the certified proof in leanprover-community/riemann-hypothesis and
-Kronecker–Weber taken from the same repository.
-
 ```lean
+-- Unconditional/AbelianERHUnconditional.lean
+theorem AbelianERH.Unconditional.abelianERH : AbelianERH.AbelianERHStatement
+theorem AbelianERH.Unconditional.cyclotomicERH : AbelianERH.CyclotomicERHStatement
+
 theorem AbelianERH.abelianERH_of_GRH (hGRH : AbelianERH.DirichletLZerosOnLine)
     (hKW : AbelianERH.KroneckerWeberStatement) : AbelianERH.AbelianERHStatement
 
@@ -115,7 +120,7 @@ Main library, `lake env lean` on a file importing `AbelianERH`:
 'AbelianERH.dedekindZeta_congr' depends on axioms: [propext, Classical.choice, Quot.sound]
 ```
 
-No `native_decide`, no finite computation, no `sorry`.
+The proof uses no `native_decide` and no finite computation, and the repository has no `sorry`.
 
 ## Proof outline
 
@@ -233,7 +238,7 @@ wall on a loaded box, no `sorryAx`):
  Quot.sound]
 ```
 
-These say: ERH for every finite abelian extension of `ℚ`, with no hypothesis left. ERH for
+`abelianERH` is ERH for every finite abelian extension of `ℚ`, with no hypothesis left. ERH for
 abelian fields is equivalent to GRH for Dirichlet L-functions, so this theorem is GRH in another
 form. `Unconditional/AbelianERHUnconditional.lean` imports, at commit `507a75d91d`,
 riemann-hypothesis's `Main` (`LFunction_eq_zero_re : DirichletLZerosOnLine`, the GRH claim), the
