@@ -157,6 +157,18 @@ This is the scoping report's "route C" (`docs/scoping/abelian-erh.md` in the con
 workspace). It uses imprimitive characters, so ramified primes never need an exact Euler factor:
 they all go into `E`.
 
+## Layout
+
+| File | Content |
+|---|---|
+| `AbelianERH/Statement.lean` | fixed targets and hypotheses (copied definitions) |
+| `AbelianERH/DirichletExp.lean` | `L(s, χ) = exp(∑ χΛ/log · n^{-s})` on `Re s > 1` |
+| `AbelianERH/Factorisation.lean` | `Λ_K` at unramified prime powers; `ζ_K = E ∏ L`; ERH from a coefficient identity |
+| `AbelianERH/Cyclotomic.lean` | the coefficient identity for `ℚ(ζ_N)` |
+| `AbelianERH/Subfield.lean` | subfields of `ℚ(ζ_N)`, transport along `≃+*`, the abelian headline |
+| `Unconditional/AbelianERHUnconditional.lean` | GRH and Kronecker–Weber from riemann-hypothesis |
+| `scripts/check-unconditional.sh` | links and checks `Unconditional/` |
+
 ## Deviations from the literature
 
 * Kronecker–Weber is a hypothesis of the main library (Mathlib lacks it at this pin), discharged
@@ -195,17 +207,37 @@ they import takes about a minute.
 
 | Theorem | Statement | Axioms |
 |---|---|---|
+| `AbelianERH.Unconditional.abelianERH` | `AbelianERHStatement` | `propext, Classical.choice, Quot.sound` |
+| `AbelianERH.Unconditional.abelian_continuedDedekindZeta_zero` | zeros of the Tate-thesis continuation of `ζ_K`, `K` abelian, in the strip have `Re s = 1/2` | `propext, Classical.choice, Quot.sound` |
 | `AbelianERH.Unconditional.cyclotomicERH` | `CyclotomicERHStatement` | `propext, Classical.choice, Quot.sound` |
-| `AbelianERH.Unconditional.isDedekindZeta_continuedDedekindZeta` | `ERH.IsDedekindZeta K (GroundTheory.Global.continuedDedekindZeta K)` | `propext, Classical.choice, Quot.sound` |
-| `AbelianERH.Unconditional.cyclotomic_continuedDedekindZeta_zero` | zeros of that continuation of `ζ_{ℚ(ζ_N)}` in the strip have `Re s = 1/2` | `propext, Classical.choice, Quot.sound` |
+| `AbelianERH.Unconditional.cyclotomic_continuedDedekindZeta_zero` | the same for `ℚ(ζ_N)` | `propext, Classical.choice, Quot.sound` |
+| `AbelianERH.Unconditional.kroneckerWeber` (U₀) | `KroneckerWeberStatement` | `propext, Classical.choice, Quot.sound` |
+| `AbelianERH.Unconditional.isDedekindZeta_continuedDedekindZeta` (U₀) | `ERH.IsDedekindZeta K (GroundTheory.Global.continuedDedekindZeta K)` | `propext, Classical.choice, Quot.sound` |
 
-These say: ERH for every cyclotomic field, given the Lean proof of GRH in
-leanprover-community/riemann-hypothesis, which has not been independently verified. Because ERH
-for `ℚ(ζ_N)` is equivalent to GRH for the characters mod `N`, this says nothing beyond that GRH
-claim. `Unconditional/AbelianERHUnconditional.lean` imports riemann-hypothesis's `Main`
-(`LFunction_eq_zero_re : DirichletLZerosOnLine`) and its Tate-thesis module
-`GroundTheory.GlobalFields.TateThesis.DedekindZetaContinuation`, at commit `507a75d91d`. Check it
-with
+Output of `scripts/check-unconditional.sh` on 2026-11-24 (riemann-hypothesis `507a75d91d`, 24 min
+wall on a loaded box, no `sorryAx`):
+
+```
+'AbelianERH.Unconditional.kroneckerWeber' depends on axioms: [propext, Classical.choice, Quot.sound]
+'AbelianERH.Unconditional.abelianERH' depends on axioms: [propext, Classical.choice, Quot.sound]
+'AbelianERH.Unconditional.abelian_continuedDedekindZeta_zero' depends on axioms: [propext, Classical.choice, Quot.sound]
+'AbelianERH.Unconditional.cyclotomicERH' depends on axioms: [propext, Classical.choice, Quot.sound]
+'AbelianERH.Unconditional.isDedekindZeta_continuedDedekindZeta' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'AbelianERH.Unconditional.cyclotomic_continuedDedekindZeta_zero' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+```
+
+These say: ERH for every finite abelian extension of `ℚ`, given the Lean proof of GRH in
+leanprover-community/riemann-hypothesis, which has not been independently verified. ERH for
+abelian fields is equivalent to GRH for Dirichlet L-functions, so this says nothing beyond that
+GRH claim. `Unconditional/AbelianERHUnconditional.lean` imports, at commit `507a75d91d`,
+riemann-hypothesis's `Main` (`LFunction_eq_zero_re : DirichletLZerosOnLine`, the GRH claim), the
+module of `UpperTheory.V.CF.kwHom` (Kronecker–Weber, a known theorem; no RH involved) and the
+Tate-thesis module `GroundTheory.GlobalFields.TateThesis.DedekindZetaContinuation` (a
+continuation of `ζ_K`, used only to show the statement is not vacuous). Check it with
 
 ```
 scripts/check-unconditional.sh /path/to/riemann-hypothesis
